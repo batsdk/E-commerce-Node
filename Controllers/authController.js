@@ -28,7 +28,27 @@ const register = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 const login = async (req, res) => {
-  res.send("login works");
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    res.status(400).json({ error: "Invalid email or password" });
+
+  const user = await User.findOne({ email });
+
+  if (!user) res.status(401).json({ error: "Can't find the User" });
+
+  const isValidPassword = await user.comparePassword(password);
+
+  if (!isValidPassword)
+    res.status(401).json({ error: "Password does not match" });
+
+  const tokenUser = {
+    name: user.name,
+    email,
+  };
+
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 const logout = async (req, res) => {
   res.send("logout works");

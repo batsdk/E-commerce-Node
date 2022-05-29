@@ -12,6 +12,7 @@ const verifyToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
+//? Everytime you make a request browser sends this to the server
 const attachCookiesToResponse = ({ res, user }) => {
   const token = createJWT({ payload: user });
 
@@ -20,6 +21,8 @@ const attachCookiesToResponse = ({ res, user }) => {
   res.cookie("token", token, {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay * 2),
+    secure: process.env.NODE_ENV === "production",
+    signed: true,
   });
 };
 

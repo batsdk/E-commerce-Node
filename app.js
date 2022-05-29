@@ -17,7 +17,7 @@ const authRouter = require("./Routes/authRoutes");
 // Middlewares
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(cookieParser());
+app.use(cookieParser(process.env.JWT_SECRET));
 
 // Import Middlewares
 const notFoundMiddleware = require("./middleware/not-found");
@@ -39,7 +39,7 @@ const start = async (req, res) => {
     await connectDB(process.env.MONGO_URI);
 
     app.listen(port, () => {
-      console.log("From video 18 " + port);
+      console.log("From video 22" + port);
     });
   } catch (error) {
     console.log("Failed to connect..");
