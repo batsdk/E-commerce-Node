@@ -6,6 +6,7 @@ const app = express();
 
 // Packages
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
 // DB
 const connectDB = require("./db/connect");
@@ -16,6 +17,7 @@ const authRouter = require("./Routes/authRoutes");
 // Middlewares
 app.use(express.json());
 app.use(morgan("tiny"));
+app.use(cookieParser());
 
 // Import Middlewares
 const notFoundMiddleware = require("./middleware/not-found");
@@ -37,7 +39,7 @@ const start = async (req, res) => {
     await connectDB(process.env.MONGO_URI);
 
     app.listen(port, () => {
-      console.log("From video 12 " + port);
+      console.log("From video 18 " + port);
     });
   } catch (error) {
     console.log("Failed to connect..");
