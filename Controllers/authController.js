@@ -24,6 +24,8 @@ const register = async (req, res) => {
     role: user.role,
   };
 
+  console.log(user);
+
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };

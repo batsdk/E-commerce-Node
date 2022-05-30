@@ -14,7 +14,7 @@ const connectDB = require("./db/connect");
 // Routers
 const authRouter = require("./Routes/authRoutes");
 const userRouter = require("./Routes/userRoutes");
-const authMiddleware = require("./middleware/authentication");
+const { authMiddleware } = require("./middleware/authentication");
 
 // Middlewares
 app.use(express.json());

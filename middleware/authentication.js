@@ -1,6 +1,7 @@
 const Errors = require("../errors");
 const { verifyToken } = require("../Utils/jwt");
 
+// Check for token and passing req.user
 const authMiddleware = (req, res, next) => {
   const token = req.signedCookies.token;
 
@@ -10,6 +11,7 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const { userId, name, role } = verifyToken(token);
+    console.log(verifyToken(token));
     req.user = {
       userId,
       name,
@@ -22,4 +24,18 @@ const authMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = { authMiddleware };
+// Checking is admin in req.user
+
+const authorizePermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      console.log(req.user);
+      console.log(roles);
+      console.log(roles.includes(req.user.role));
+      throw new Errors.unauthorized("Does not have acces to this route");
+    }
+    next();
+  };
+};
+
+module.exports = { authMiddleware, authorizePermissions };
