@@ -14,6 +14,7 @@ const connectDB = require("./db/connect");
 // Routers
 const authRouter = require("./Routes/authRoutes");
 const userRouter = require("./Routes/userRoutes");
+const authMiddleware = require("./middleware/authentication");
 
 // Middlewares
 app.use(express.json());
@@ -29,7 +30,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 // });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", authMiddleware, userRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

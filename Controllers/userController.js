@@ -3,6 +3,7 @@ const User = require("../Models/User");
 const Errors = require("../errors");
 
 const getAllUsers = async (req, res) => {
+  console.log(req.user);
   const user = await User.find({ role: "user" }).select("-password");
 
   if (!user) throw new Errors.BadRequestError("User not found");
