@@ -1,8 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const CustomError = require("../errors");
-const { attachCookiesToResponse } = require("../Utils");
+const { attachCookiesToResponse, createJWT } = require("../Utils");
 
+// * Register Method
 const register = async (req, res) => {
   const { email, name, password } = req.body;
 
@@ -19,16 +20,16 @@ const register = async (req, res) => {
   const user = await User.create({ name, email, password, role });
 
   const tokenUser = {
-    name: user.name,
     userId: user._id,
+    name: user.name,
     role: user.role,
   };
-
-  console.log(user);
 
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
+
+// * Login Method
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -46,10 +47,11 @@ const login = async (req, res) => {
 
   const tokenUser = {
     name: user.name,
-    email,
+    userId: user._id,
+    role: user.role,
   };
 
-  attachCookiesToResponse({ res, user: tokenUser });
+  attachCookiesToResponse({ res, tokenUser });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 const logout = async (req, res) => {

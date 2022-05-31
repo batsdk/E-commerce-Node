@@ -31,7 +31,6 @@ const authorizePermissions = (...roles) => {
     if (!roles.includes(req.user.role)) {
       console.log(req.user);
       console.log(roles);
-      console.log(roles.includes(req.user.role));
       throw new Errors.unauthorized("Does not have acces to this route");
     }
     next();

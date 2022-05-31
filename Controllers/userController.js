@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const Errors = require("../errors");
 
+// Done
 const getAllUsers = async (req, res) => {
   console.log(req.user);
   const user = await User.find({ role: "user" }).select("-password");
@@ -10,6 +11,8 @@ const getAllUsers = async (req, res) => {
 
   res.status(StatusCodes.ACCEPTED).json({ user });
 };
+
+// Done
 const getSingleUser = async (req, res) => {
   const { id } = req.params;
 
@@ -19,14 +22,37 @@ const getSingleUser = async (req, res) => {
 
   res.status(StatusCodes.ACCEPTED).json({ user });
 };
-const showCurrentUser = async (req, res) => {
-  res.send("Show current user");
-};
+
+// NOT DONE
+const showCurrentUser = async (req, res) => {};
 const updateUser = async (req, res) => {
   res.send("Update User");
 };
+
+// NOT DONE
 const updateUserPassword = async (req, res) => {
-  res.send("Update user password");
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    throw new Errors.UnauthenticatedError(
+      "Please enter both old and new passwords"
+    );
+  }
+
+  const user = await User.findOne({
+    _id: req.user.userId,
+  });
+
+  const validPassword = await user.comparePassword(oldPassword);
+
+  if (!validPassword) {
+    throw new Errors.unauthorized("Invalid Credentials");
+  }
+
+  user.password = newPassword;
+
+  await user.save();
+  res.status(StatusCodes.ACCEPTED).json({});
 };
 
 module.exports = {
