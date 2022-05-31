@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const Errors = require("../errors");
+const { attachCookiesToResponse, createTokenUser } = require("../Utils");
 
 // Done
 const getAllUsers = async (req, res) => {
@@ -25,34 +26,41 @@ const getSingleUser = async (req, res) => {
 
 // NOT DONE
 const showCurrentUser = async (req, res) => {};
+
+// In Progress
 const updateUser = async (req, res) => {
-  res.send("Update User");
+  const { email, name } = req.body;
+
+  if (!email || !name) {
+    throw new Errors.BadRequestError("Must provide both email and name");
+  }
+
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { name, email },
+    { new: true, runValidators: true }
+  );
+
+  if (!user) {
+    console.log(req.user);
+    console.log(user == null);
+    console.log(user);
+    throw new Errors.BadRequestError("Invalid User Cookie");
+  }
+
+  const tokenUser = {
+    name: "user.name",
+    userId: "user._id",
+    role: "user.role",
+  };
+  attachCookiesToResponse({ res, user: tokenUser });
+
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
-// NOT DONE
+// Done
 const updateUserPassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-
-  if (!oldPassword || !newPassword) {
-    throw new Errors.UnauthenticatedError(
-      "Please enter both old and new passwords"
-    );
-  }
-
-  const user = await User.findOne({
-    _id: req.user.userId,
-  });
-
-  const validPassword = await user.comparePassword(oldPassword);
-
-  if (!validPassword) {
-    throw new Errors.unauthorized("Invalid Credentials");
-  }
-
-  user.password = newPassword;
-
-  await user.save();
-  res.status(StatusCodes.ACCEPTED).json({});
+  res.status(StatusCodes.OK).json({ msg: "Still In development.." });
 };
 
 module.exports = {

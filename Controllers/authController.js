@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const CustomError = require("../errors");
-const { attachCookiesToResponse, createJWT } = require("../Utils");
+const { attachCookiesToResponse, createTokenUser } = require("../Utils");
 
 // * Register Method
 const register = async (req, res) => {
@@ -19,11 +19,7 @@ const register = async (req, res) => {
 
   const user = await User.create({ name, email, password, role });
 
-  const tokenUser = {
-    userId: user._id,
-    name: user.name,
-    role: user.role,
-  };
+  const tokenUser = createTokenUser(user);
 
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
@@ -38,22 +34,22 @@ const login = async (req, res) => {
 
   const user = await User.findOne({ email });
 
-  if (!user) res.status(401).json({ error: "Can't find the User" });
+  if (!user) {
+    res.status(401).json({ error: "Can't find the User" });
+  }
 
   const isValidPassword = await user.comparePassword(password);
 
   if (!isValidPassword)
     res.status(401).json({ error: "Password does not match" });
 
-  const tokenUser = {
-    name: user.name,
-    userId: user._id,
-    role: user.role,
-  };
+  const tokenUser = createTokenUser(user);
 
-  attachCookiesToResponse({ res, tokenUser });
-  res.status(StatusCodes.CREATED).json({ user: tokenUser });
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.ACCEPTED).json({ user: tokenUser });
 };
+
+//* Logout Method
 const logout = async (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
