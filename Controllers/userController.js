@@ -1,7 +1,11 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const Errors = require("../errors");
-const { attachCookiesToResponse, createTokenUser } = require("../Utils");
+const {
+  attachCookiesToResponse,
+  createTokenUser,
+  checkPermission,
+} = require("../Utils");
 
 // Done
 const getAllUsers = async (req, res) => {
@@ -20,47 +24,53 @@ const getSingleUser = async (req, res) => {
   const user = await User.findOne({ _id: id }).select("-password");
 
   if (!user) throw new Errors.NotFoundError("Can not find user");
-
+  checkPermission(req.user, user._id);
   res.status(StatusCodes.ACCEPTED).json({ user });
 };
 
 // NOT DONE
 const showCurrentUser = async (req, res) => {};
 
-// In Progress
+// * Update User with User.Save()
+// Done
 const updateUser = async (req, res) => {
   const { email, name } = req.body;
 
   if (!email || !name) {
+    console.log(req.body);
     throw new Errors.BadRequestError("Must provide both email and name");
   }
 
-  const user = await User.findOneAndUpdate(
-    { _id: req.user.id },
-    { name, email },
-    { new: true, runValidators: true }
-  );
+  const user = await User.findOne({ _id: req.user.userId });
 
-  if (!user) {
-    console.log(req.user);
-    console.log(user == null);
-    console.log(user);
-    throw new Errors.BadRequestError("Invalid User Cookie");
-  }
+  user.email = email;
+  user.name = name;
 
-  const tokenUser = {
-    name: "user.name",
-    userId: "user._id",
-    role: "user.role",
-  };
+  const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
 
-  res.status(StatusCodes.OK).json({ user: tokenUser });
+  res.status(StatusCodes.OK).end();
 };
 
-// Done
 const updateUserPassword = async (req, res) => {
-  res.status(StatusCodes.OK).json({ msg: "Still In development.." });
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    throw new Errors.BadRequestError("Must provide both new and ol passwords");
+  }
+
+  const user = await User.findOne({ _id: req.user.userId });
+
+  const isValidPassword = await user.comparePassword(oldPassword);
+
+  if (!isValidPassword) {
+    throw new Errors.UnauthenticatedError("Wrong Password");
+  }
+
+  user.password = newPassword;
+
+  await user.save();
+  res.status(StatusCodes.OK).end();
 };
 
 module.exports = {
@@ -70,3 +80,26 @@ module.exports = {
   updateUser,
   updateUserPassword,
 };
+
+// * Updating User with findOneAndUpdate
+// DONE
+// const updateUserPassword = async (req, res) => {
+//   const { oldPassword, newPassword } = req.body;
+
+//   if (!oldPassword || !newPassword) {
+//     throw new Errors.BadRequestError("Must provide both new and ol passwords");
+//   }
+
+//   const user = await User.findOne({ _id: req.user.userId });
+
+//   const isValidPassword = await user.comparePassword(oldPassword);
+
+//   if (!isValidPassword) {
+//     throw new Errors.UnauthenticatedError("Wrong Password");
+//   }
+
+//   user.password = newPassword;
+
+//   await user.save();
+//   res.status(StatusCodes.OK).end();
+// };

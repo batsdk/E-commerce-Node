@@ -42,7 +42,7 @@ const start = async (req, res) => {
     await connectDB(process.env.MONGO_URI);
 
     app.listen(port, () => {
-      console.log("From video 33 : " + port);
+      console.log("From video 37 : " + port);
     });
   } catch (error) {
     console.log("Failed to connect..");
