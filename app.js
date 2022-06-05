@@ -16,6 +16,7 @@ const connectDB = require("./db/connect");
 const authRouter = require("./Routes/authRoutes");
 const userRouter = require("./Routes/userRoutes");
 const productRouter = require("./Routes/productRoutes");
+const reviewRouter = require("./Routes/reviewRoutes");
 
 const { authMiddleware } = require("./middleware/authentication");
 
@@ -33,6 +34,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authMiddleware, userRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
@@ -44,7 +46,7 @@ const start = async (req, res) => {
     await connectDB(process.env.MONGO_URI);
 
     app.listen(port, () => {
-      console.log("From video (46) : " + port);
+      console.log("Listening on Port " + port);
     });
   } catch (error) {
     console.log("Failed to connect..");
