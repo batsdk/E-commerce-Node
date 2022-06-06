@@ -10,6 +10,8 @@ const {
   uploadImage,
 } = require("../Controllers/productController");
 
+const { getSingleProductReview } = require("../Controllers/reviewController");
+
 // Auth middleware
 const {
   authMiddleware,
@@ -30,5 +32,7 @@ router
   .get(getSingleProduct)
   .patch(authMiddleware, authorizePermissions("admin"), updateProduct)
   .delete(authMiddleware, authorizePermissions("admin"), deleteProduct);
+
+router.route("/:id/reviews").get(getSingleProductReview);
 
 module.exports = router;

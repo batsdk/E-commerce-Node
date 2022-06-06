@@ -98,7 +98,21 @@ const deleteReview = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Review Deleted Successfully" });
 };
 
+// ? Get Single Product Reviews
+const getSingleProductReview = async (req, res) => {
+  const { id: productId } = req.params;
+
+  const review = await Review.find({ product: productId });
+
+  if (!review) {
+    throw new Errors.NotFoundError("No reviews found");
+  }
+
+  res.status(StatusCodes.OK).json({ nbHits: review.length, review });
+};
+
 module.exports = {
+  getSingleProductReview,
   createReview,
   updateReview,
   deleteReview,

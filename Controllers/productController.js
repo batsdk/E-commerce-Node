@@ -46,13 +46,15 @@ const updateProduct = async (req, res) => {
 
 // *Delete Product
 const deleteProduct = async (req, res) => {
-  const product = await Product.findOneAndRemove({ _id: req.params.id });
+  const product = await Product.findOne({ _id: req.params.id });
 
   if (!product) {
     throw new Errors.BadRequestError("Can not find Product");
   }
 
-  res.status(StatusCodes.OK).end();
+  await product.remove();
+
+  res.status(StatusCodes.OK).json({ msg: "Product Deleted Successfully" });
 };
 
 //* Upload Image
