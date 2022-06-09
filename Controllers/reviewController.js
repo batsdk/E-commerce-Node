@@ -70,7 +70,7 @@ const updateReview = async (req, res) => {
   const review = await Review.findOne({ _id: reviewId });
 
   if (!review) {
-    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+    throw new Errors.NotFoundError(`No review with id ${reviewId}`);
   }
 
   checkPermission(req.user, review.user);
