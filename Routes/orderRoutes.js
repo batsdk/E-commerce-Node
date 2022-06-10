@@ -17,8 +17,8 @@ const {
 
 router
   .route("/")
-  .post(authMiddleware, createOrder)
-  .get(authMiddleware, authorizePermissions, getAllOrders);
+  .get(authMiddleware, authorizePermissions("admin"), getAllOrders)
+  .post(authMiddleware, createOrder);
 
 router.route("/showAllMyOrders").get(authMiddleware, getCurrentUserOrders);
 

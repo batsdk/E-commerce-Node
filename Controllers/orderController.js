@@ -1,19 +1,20 @@
 const createOrder = async (req, res) => {
-  res.end("Create");
+  res.send("Create");
 };
 const getAllOrders = async (req, res) => {
-  res.end("Get all users");
+  console.log("executed");
+  res.send("Get all Orders");
 };
 const getCurrentUserOrders = async (req, res) => {
-  res.end("getCurrentUserOrders");
+  res.send("getCurrentUserOrders");
 };
 
 const getSingleOrder = async (req, res) => {
-  res.sedn("get single orders");
+  res.send("get single orders");
 };
 
 const updateOrder = async (req, res) => {
-  res.end("Update order");
+  res.send("Update order");
 };
 
 module.exports = {
