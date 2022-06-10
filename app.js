@@ -17,6 +17,7 @@ const authRouter = require("./Routes/authRoutes");
 const userRouter = require("./Routes/userRoutes");
 const productRouter = require("./Routes/productRoutes");
 const reviewRouter = require("./Routes/reviewRoutes");
+const orderRouter = require("./Routes/orderRoutes");
 
 const { authMiddleware } = require("./middleware/authentication");
 
@@ -35,6 +36,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authMiddleware, userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/orders", orderRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
