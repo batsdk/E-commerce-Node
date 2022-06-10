@@ -1,9 +1,9 @@
 const Review = require("../Models/Review");
-const Product = require("../Models/Product");
-const { StatusCodes } = require("http-status-codes");
 const User = require("../Models/User");
 const Errors = require("../errors");
 const { checkPermission } = require("../Utils");
+const { StatusCodes } = require("http-status-codes");
+const Product = require("../Models/Product");
 
 // ? Create a Review
 const createReview = async (req, res) => {

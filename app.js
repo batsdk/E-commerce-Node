@@ -48,7 +48,7 @@ const start = async (req, res) => {
     await connectDB(process.env.MONGO_URI);
 
     app.listen(port, () => {
-      console.log("Listening on Port (64) " + port);
+      console.log("Listening on Port (64 ) " + port);
     });
   } catch (error) {
     console.log("Failed to connect..");
